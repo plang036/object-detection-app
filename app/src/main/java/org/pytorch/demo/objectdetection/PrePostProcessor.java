@@ -7,6 +7,7 @@
 package org.pytorch.demo.objectdetection;
 
 import android.graphics.Rect;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,12 +32,16 @@ public class PrePostProcessor {
     static float[] NO_STD_RGB = new float[] {1.0f, 1.0f, 1.0f};
 
     // model input image size
+    //static int mInputWidth = 1280;
+    //static int mInputHeight = 1280;
     static int mInputWidth = 640;
     static int mInputHeight = 640;
 
     // model output is of size 25200*85
     private static int mOutputRow = 25200; // as decided by the YOLOv5 model for input image of size 640*640
-    private static int mOutputColumn = 6; // left, top, right, bottom, score and 1 class probability
+    //private static int mOutputRow = 102000; // modele s6, m6, etc avec input 1280*1280
+    private static int mClass = 1; // nombre de classes
+    private static int mOutputColumn = 5 + mClass; // left, top, right, bottom, score + n classe
     private static float mThreshold = 0.30f; // score above which a detection is generated
     private static int mNmsLimit = 15;
 
@@ -118,6 +123,8 @@ public class PrePostProcessor {
 
     static ArrayList<Result> outputsToNMSPredictions(float[] outputs, float imgScaleX, float imgScaleY, float ivScaleX, float ivScaleY, float startX, float startY) {
         ArrayList<Result> results = new ArrayList<>();
+        int test = outputs.length;
+        Log.d("output size", Integer.toString(test));
         for (int i = 0; i< mOutputRow; i++) {
             if (outputs[i* mOutputColumn +4] > mThreshold) {
                 float x = outputs[i* mOutputColumn];

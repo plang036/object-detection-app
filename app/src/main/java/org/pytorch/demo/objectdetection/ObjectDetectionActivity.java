@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetectionActivity.AnalysisResult> {
     private Module mModule = null;
@@ -87,7 +88,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         try {
             if (mModule == null) {
                 mModule = LiteModuleLoader.load(MainActivity.assetFilePath(getApplicationContext(),
-                        "yolov5s_v1.ptl"));
+                        "yolov5m_v1_640.ptl"));
             }
         } catch (IOException e) {
             Log.e("Object Detection", "Error reading assets", e);
@@ -98,11 +99,14 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         matrix.postRotate(90.0f);
         bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, PrePostProcessor.mInputWidth, PrePostProcessor.mInputHeight, true);
-
+        Date start = new Date();
         final Tensor inputTensor = TensorImageUtils.bitmapToFloat32Tensor(resizedBitmap, PrePostProcessor.NO_MEAN_RGB, PrePostProcessor.NO_STD_RGB);
         IValue[] outputTuple = mModule.forward(IValue.from(inputTensor)).toTuple();
         final Tensor outputTensor = outputTuple[0].toTensor();
         final float[] outputs = outputTensor.getDataAsFloatArray();
+        Date end = new Date();
+        long diff = end.getTime() - start.getTime();
+        Log.d("Inference:", Long.toString(diff));
 
         float imgScaleX = (float)bitmap.getWidth() / PrePostProcessor.mInputWidth;
         float imgScaleY = (float)bitmap.getHeight() / PrePostProcessor.mInputHeight;

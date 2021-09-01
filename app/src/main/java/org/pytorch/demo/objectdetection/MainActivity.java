@@ -43,11 +43,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements Runnable {
     private int mImageIndex = 0;
-    private String[] mTestImages = {"test1.jpg", "test2.jpg", "test3.jpg"};
+    private String[] mTestImages = {"test1.jpg", "test2.jpg", "test3.jpg", "test4.jpg", "test5.jpg", "test6.jpg"};
 
     private ImageView mImageView;
     private ResultView mResultView;
@@ -58,14 +59,14 @@ public class MainActivity extends AppCompatActivity implements Runnable {
     private float mImgScaleX, mImgScaleY, mIvScaleX, mIvScaleY, mStartX, mStartY;
 
     public static String assetFilePath(Context context, String assetName) throws IOException {
-        Log.d("assetFilePath", "assetFilePath");
+        //Log.d("assetFilePath", "assetFilePath");
         File file = new File(context.getFilesDir(), assetName);
-        Log.d("assetFilePath", file.getAbsolutePath());
+        //Log.d("assetFilePath", file.getAbsolutePath());
         if (file.exists() && file.length() > 0) {
 
             return file.getAbsolutePath();
         }
-        Log.d("assetFilePath", "try");
+        //Log.d("assetFilePath", "try");
         try (InputStream is = context.getAssets().open(assetName)) {
             try (OutputStream os = new FileOutputStream(file)) {
                 byte[] buffer = new byte[4 * 1024];
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements Runnable {
         mResultView.setVisibility(View.INVISIBLE);
 
         final Button buttonTest = findViewById(R.id.testButton);
-        buttonTest.setText(("Test Image 1/3"));
+        buttonTest.setText(String.format("Text Image 1/%d", mTestImages.length));
         buttonTest.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mResultView.setVisibility(View.INVISIBLE);
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements Runnable {
         try {
             //Log.d("nModule", "avant");
             mModule = LiteModuleLoader.load(MainActivity.assetFilePath(getApplicationContext(),
-                    "yolov5s_v1.ptl"));
+                    "yolov5s_v1_640.ptl"));
 
             //Log.d("nModule", "pas d'erreur");
             BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("classes.txt")));
@@ -246,9 +247,14 @@ public class MainActivity extends AppCompatActivity implements Runnable {
     public void run() {
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(mBitmap, PrePostProcessor.mInputWidth, PrePostProcessor.mInputHeight, true);
         final Tensor inputTensor = TensorImageUtils.bitmapToFloat32Tensor(resizedBitmap, PrePostProcessor.NO_MEAN_RGB, PrePostProcessor.NO_STD_RGB);
+        Date start = new Date();
         IValue[] outputTuple = mModule.forward(IValue.from(inputTensor)).toTuple();
         final Tensor outputTensor = outputTuple[0].toTensor();
         final float[] outputs = outputTensor.getDataAsFloatArray();
+        Date end = new Date();
+        long diff = end.getTime() - start.getTime();
+        Log.d("Inference:", Long.toString(diff));
+
         final ArrayList<Result> results =  PrePostProcessor.outputsToNMSPredictions(outputs, mImgScaleX, mImgScaleY, mIvScaleX, mIvScaleY, mStartX, mStartY);
 
         runOnUiThread(() -> {
