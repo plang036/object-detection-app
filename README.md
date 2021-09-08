@@ -5,59 +5,59 @@
 Emplacement des fichiers : object-detection-app\app\src\main\java\org\pytorch\demo\objectdetection
 ### Avec un modele avec une entree de 640 par 640:
 Dans le fichier PrePostProcessor.java:
-    -ligne 35 a 39:
+ligne 35 a 39:
         ```
         //static int mInputWidth = 1280;
         //static int mInputHeight = 1280;
         static int mInputWidth = 640;
         static int mInputHeight = 640;
         ```
-    -ligne 41 a 42
+ligne 41 a 42
         ```
         private static int mOutputRow = 25200;
         //private static int mOutputRow = 102000;
         ```
-    -ligne 43:
+ligne 43:
         ```
         private static int mClass = 1; //pour le nombre de classe
         ```
         
- ### Avec un modele avec une entree de 1280 par 1280
- Dans le fichier PrePostProcessor.java:
-    -ligne 35 a 39:
+### Avec un modele avec une entree de 1280 par 1280
+Dans le fichier PrePostProcessor.java:
+ligne 35 a 39:
         ```
         static int mInputWidth = 1280;
         static int mInputHeight = 1280;
         //static int mInputWidth = 640;
         //static int mInputHeight = 640;
         ```
-    -ligne 41 a 42
+ligne 41 a 42
         ```
         //private static int mOutputRow = 25200;
         private static int mOutputRow = 102000;
         ```
-    -ligne 43:
+ligne 43:
         ```
         private static int mClass = 1; //pour le nombre de classe
         ```
         
- ### Pour tout les types de modele:
- Dans le fichier ObjectDetectionActivity.java:
-    -ligne 90:
+### Pour tout les types de modele:
+Dans le fichier ObjectDetectionActivity.java:
+ligne 90:
         ```
         mModule = LiteModuleLoader.load(MainActivity.assetFilePath(getApplicationContext(),
                         "XXXXX.ptl"));
         ```
-        ou XXXXX est le nom du modele dans le object-detection-app\app\src\main\assets
+ou XXXXX est le nom du modele dans le object-detection-app\app\src\main\assets
         
         
- Dans le fichier MainActivity.java:
-    -ligne 190:
+Dans le fichier MainActivity.java:
+ligne 190:
         ```
         mModule = LiteModuleLoader.load(MainActivity.assetFilePath(getApplicationContext(),
                         "XXXXX.ptl"));
         ```
-        ou XXXXX est le nom du modele dans le object-detection-app\app\src\main\assets
+ou XXXXX est le nom du modele dans le object-detection-app\app\src\main\assets
         
         
 
