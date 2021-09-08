@@ -1,5 +1,49 @@
 # Object Detection with YOLOv5 on Android
 
+## Modifications requises pour l'application
+
+Emplacement des fichiers : object-detection-app\app\src\main\java\org\pytorch\demo\objectdetection
+### Avec un modele avec une entree de 640 par 640:
+Dans le fichier PrePostProcessor.java:
+    -ligne 35 a 39:
+        //static int mInputWidth = 1280;
+        //static int mInputHeight = 1280;
+        static int mInputWidth = 640;
+        static int mInputHeight = 640;
+    -ligne 41 a 42
+        private static int mOutputRow = 25200;
+        //private static int mOutputRow = 102000;
+    -ligne 43:
+        private static int mClass = 1; //pour le nombre de classe
+        
+ ### Avec un modele avec une entree de 1280 par 1280
+ Dans le fichier PrePostProcessor.java:
+    -ligne 35 a 39:
+        static int mInputWidth = 1280;
+        static int mInputHeight = 1280;
+        //static int mInputWidth = 640;
+        //static int mInputHeight = 640;
+    -ligne 41 a 42
+        //private static int mOutputRow = 25200;
+        private static int mOutputRow = 102000;
+    -ligne 43:
+        private static int mClass = 1; //pour le nombre de classe
+        
+ ### Pour tout les types de modele:
+ Dans le fichier ObjectDetectionActivity.java:
+    -ligne 90:
+        mModule = LiteModuleLoader.load(MainActivity.assetFilePath(getApplicationContext(),
+                        "XXXXX.ptl"));
+        ou XXXXX est le nom du modele dans le object-detection-app\app\src\main\assets
+        
+ Dans le fichier MainActivity.java:
+    -ligne 190:
+        mModule = LiteModuleLoader.load(MainActivity.assetFilePath(getApplicationContext(),
+                        "XXXXX.ptl"));
+        ou XXXXX est le nom du modele dans le object-detection-app\app\src\main\assets
+        
+        
+
 ## Introduction
 
 [YOLO](https://pjreddie.com/darknet/yolo/) (You Only Look Once) is one of the fastest and most popular object detection models. [YOLOv5](https://github.com/ultralytics/yolov5) is an open-source implementation of the latest version of YOLO (for a quick test of loading YOLOv5 from PyTorch hub for inference, see [here](https://pytorch.org/hub/ultralytics_yolov5/#load-from-pytorch-hub)). This Object Detection with YOLOv5 Android sample app uses the PyTorch scripted YOLOv5 model to detect objects of the [80 classes](https://github.com/ultralytics/yolov5/blob/master/data/coco.yaml) trained with the model.
